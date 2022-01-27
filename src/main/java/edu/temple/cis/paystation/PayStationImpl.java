@@ -20,10 +20,18 @@
 
 package edu.temple.cis.paystation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PayStationImpl implements PayStation {
     
     private int insertedSoFar;
     private int timeBought;
+    private Map<Integer, Integer> cancelMap;
+
+    public PayStationImpl(){
+        this.cancelMap = new HashMap<> ();
+    }
 
     @Override
     public void addPayment(int coinValue)
@@ -37,6 +45,7 @@ public class PayStationImpl implements PayStation {
         }
         insertedSoFar += coinValue;
         timeBought = insertedSoFar / 5 * 2;
+        cancelMap.put (coinValue,cancelMap.getOrDefault (coinValue,0)+1);
     }
 
     @Override
@@ -52,11 +61,21 @@ public class PayStationImpl implements PayStation {
     }
 
     @Override
-    public void cancel() {
+    public Map<Integer, Integer> cancel() {
+        Map<Integer, Integer> cloneMap = new HashMap<> (cancelMap);
         reset();
+        return cloneMap;
     }
-    
+
+    @Override
+    public int empty() {
+        int totalCollected = insertedSoFar;
+        reset();
+        return totalCollected;
+    }
+
     private void reset() {
         timeBought = insertedSoFar = 0;
+        cancelMap.clear ();
     }
 }

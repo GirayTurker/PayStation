@@ -12,9 +12,12 @@
  */
 package edu.temple.cis.paystation;
 
+import java.util.Map;
+
 public class ReceiptImpl implements Receipt {
 
     private int value;
+
 
     public ReceiptImpl(int value) {
         this.value = value;

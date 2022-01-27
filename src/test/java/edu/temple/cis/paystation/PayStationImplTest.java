@@ -15,17 +15,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PayStationImplTest {
 
     PayStation ps;
-
+    Map<Integer, Integer> mapTest;
 
     @Before
     public void setup() {
         ps = new PayStationImpl();
-
+        mapTest = new HashMap<> ();
     }
 
     /**
@@ -184,6 +185,68 @@ public class PayStationImplTest {
                 10, ps.empty());
     }
 
+    /**
+     * Call to cancel returns a map containing one coin entered
+     */
+    @Test
+    public void shouldContainOneCoinInMap()
+            throws IllegalCoinException {
+        ps.addPayment(10);
+        mapTest.put(10, 1);
+        assertEquals("Should return a map containing only one coin entered",
+                mapTest, ps.cancel());
+    }
 
+    /**
+     * Call to cancel returns a map containing a mixture of coins entered
+     */
+    @Test
+    public void shouldContainMixtureOfCoins()
+            throws IllegalCoinException {
+        ps.addPayment(10);
+        ps.addPayment(5);
+        ps.addPayment(5);
+        ps.addPayment(25);
+        mapTest.put(10, 1);
+        mapTest.put(5, 2);
+        mapTest.put(25, 1);
+        assertEquals("Should return a map containing a mixture of coins entered",
+                mapTest, ps.cancel());
+    }
+
+    /**
+     * Call to cancel returns a map that does not contain a key for a coin not entered
+     */
+    @Test
+    public void shouldNotContainCoinNotEntered()
+            throws IllegalCoinException {
+        ps.addPayment(10);
+        assertFalse("Should not contain a key for a coin not entered", ps.cancel().containsKey(25));
+    }
+
+    /**
+     * Call to cancel clears the map
+     */
+    @Test
+    public void shouldClearTheMapAfterCancel()
+            throws IllegalCoinException {
+        ps.addPayment(25);
+        ps.addPayment(10);
+        ps.cancel();
+        assertTrue("The map should be empty after cancel() is called", ps.cancel().isEmpty());
+    }
+
+    /**
+     * Call to buy clears the map
+     */
+    @Test
+    public void shouldClearTheMapAfterBuy()
+            throws IllegalCoinException {
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.buy();
+        assertTrue("The map should be empty after buy() is called", ps.cancel().isEmpty());
+    }
 
 }
