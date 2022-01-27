@@ -15,13 +15,17 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
+import java.util.Map;
+
 public class PayStationImplTest {
 
     PayStation ps;
 
+
     @Before
     public void setup() {
         ps = new PayStationImpl();
+
     }
 
     /**
@@ -138,4 +142,48 @@ public class PayStationImplTest {
         assertEquals("Insert after cancel should work",
                 10, ps.readDisplay());
     }
+
+    /**
+    * Call to Empty returns the total amount entered
+    */
+    @Test
+    public void shouldReturnTotalAmountAfterEmpty()
+        throws  IllegalCoinException{
+        ps.addPayment(25);
+        assertEquals("Empty should return total amount",
+                25, ps.empty());
+
+    }
+
+    /**
+     * Call to empty resets the total to zero
+     */
+    @Test
+    public void shouldResetTotalToZeroAfterEmpty()
+            throws IllegalCoinException {
+        ps.addPayment(5);
+        ps.addPayment(10);
+        ps.empty();
+        assertEquals("Empty, should resets the total to zero!",
+                0, ps.readDisplay());
+    }
+
+    /**
+     * Canceled entry does not add to the amount returned by empty
+     */
+    @Test
+    public void shouldNotAddToAmountReturnedByEmpty()
+            throws IllegalCoinException {
+        ps.addPayment(25);
+        ps.addPayment(5);
+        ps.cancel();
+        assertEquals("Canceled entry! Does not add up to the result",
+                0, ps.empty());
+        ps.addPayment(10);
+        assertEquals("After calling empty, it still works!",
+                10, ps.empty());
+    }
+
+
+
 }
